@@ -1,0 +1,11 @@
+{
+	"name": "map-layers",
+	"version": "1.0.0",
+	"scripts": {
+		"build-data": "./build-data.bash"
+	},
+	"license": "UNLICENSED",
+	"devDependencies": {
+		"mapshaper": "^0.6.4"
+	}
+}
