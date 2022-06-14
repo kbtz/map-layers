@@ -1,11 +1,26 @@
 {
 	"name": "map-layers",
+	"license": "UNLICENSED",
 	"version": "1.0.0",
 	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
 		"build-data": "./build-data.bash"
 	},
-	"license": "UNLICENSED",
+	"dependencies": {
+		"d3-geo": "^3.0.1",
+		"d3-geo-projection": "^4.0.0",
+		"d3-selection": "^3.0.0",
+		"d3-zoom": "^3.0.0",
+		"topojson-client": "^3.1.0"
+	},
 	"devDependencies": {
-		"mapshaper": "^0.6.4"
+		"@types/d3-geo": "^3.0.2",
+		"@types/d3-selection": "^3.0.2",
+		"@types/d3-zoom": "^3.0.1",
+		"@types/topojson-client": "^3.1.1",
+		"mapshaper": "^0.6.4",
+		"typescript": "^4.5.4",
+		"vite": "^2.9.9"
 	}
 }

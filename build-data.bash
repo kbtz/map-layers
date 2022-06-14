@@ -26,7 +26,7 @@ npx mapshaper -i ${COUNTRIES}/${COUNTRIES}.shp \
 }
 
 npx mapshaper -i ${STATES}/${STATES}.shp snap \
-	-simplify weighted 20% \
+	-simplify weighted 5% \
 	-filter-islands min-area="100000000" remove-empty \
 	-rename-fields code=adm0_a3 \
 	`# remove overlapping area between alaska and russia` \
@@ -56,5 +56,4 @@ npx mapshaper -i countries.json states.json combine-files \
 # TODO split country states
 #[ -d states ] || {
 
-cd ..;
-#rm -r build-data
+cd ..; #rm -r build-data

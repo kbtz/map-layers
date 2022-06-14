@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map Layers</title>
+  </head>
+  <body>
+    <div id="map-layers"></div>
+    <script type="module">
+			import { init } from './main.ts'
+			import data from './map-data.json'
+			init('#map-layers', data)
+		</script>
+		
+  </body>
+</html>
