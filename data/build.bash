@@ -3,7 +3,7 @@ CDN=https://naciscdn.org/naturalearth/${RES}/cultural
 COUNTRIES=ne_${RES}_admin_0_countries
 STATES=ne_${RES}_admin_1_states_provinces
 
-cd $(dirname ${BASH_SOURCE}); mkdir -p build-data; cd build-data
+cd $(dirname ${BASH_SOURCE}); mkdir -p build; cd build
 rm countries.json states.json ../map-data.json 2> /dev/null
 set -e
 
@@ -55,5 +55,3 @@ npx mapshaper -i countries.json states.json combine-files \
 
 # TODO split country states
 #[ -d states ] || {
-
-cd ..; #rm -r build-data

@@ -3,15 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="shortcut icon" href="favicon.png" type="image/png">
     <title>Map Layers</title>
   </head>
   <body>
     <div id="map-layers"></div>
     <script type="module">
-			import { init } from './main.ts'
-			import data from './map-data.json'
-			init('#map-layers', data)
+			import init from './src/main.ts'
+			import data from './data/map-data.json'
+			
+			const hostEl = document.getElementById('map-layers')
+			init(hostEl, data)
 		</script>
-		
   </body>
 </html>

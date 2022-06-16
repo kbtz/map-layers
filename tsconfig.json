@@ -7,6 +7,9 @@
 			"ESNext",
 			"DOM"
 		],
+		"types": [
+			"vite/client"
+		],
 		"moduleResolution": "Node",
 		"strict": true,
 		"sourceMap": true,
@@ -20,6 +23,7 @@
 		"skipLibCheck": true
 	},
 	"include": [
-		"./*.ts"
+		"src/*.ts",
+		"typings/*.d.ts"
 	]
 }

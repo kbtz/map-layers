@@ -1,24 +1,20 @@
 import './style.css'
 
 import d3 from './d3'
-import { feature } from 'topojson-client'
 
-const Features = (data: MapData) => (object: keyof MapData['objects']) =>
-	feature(data, data.objects[object]).features
-
-export const init = (selector: string, data: MapData) => {
+export default (hostEl: HTMLElement, data: MapData) => {
 	const
-		features = Features(data),
+		features = d3.features(data),
 		projection = d3.geoPatterson().rotate([-11, 0]),
 		path = d3.geoPath(projection),
-		zoom = d3.zoom<SVGSVGElement, any>().scaleExtent([1, 8]),
-		host = d3.select<HTMLElement, any>(selector)!,
+		zoom = d3.zoom().scaleExtent([1, 8]),
+		host = d3.select(hostEl),
 		svg = host.append('svg'),
 		root = svg.append('g.root'),
 		world = root.append('g.world')
 
 	world.selectAll('path')
-		.data(features('world'))
+		.data(features.world)
 		.join('path')
 		.attr('d', path)
 
