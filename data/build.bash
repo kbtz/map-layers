@@ -27,10 +27,11 @@ npx mapshaper -i ${COUNTRIES}/${COUNTRIES}.shp \
 
 npx mapshaper -i ${STATES}/${STATES}.shp snap \
 	-simplify weighted 5% \
-	-filter-islands min-area="100000000" remove-empty \
+	-filter-islands min-area="500000000" remove-empty \
 	-rename-fields code=adm0_a3 \
 	`# remove overlapping area between alaska and russia` \
 	-erase bbox=-179.2,51.1,-167.7,63.9 \
+	-erase bbox=172.6,52.7,173.5,53.1 \
 	`# remove north and south poles` \
 	-clip bbox=-181,-57,181,87 \
 	-filter 'code !== "ATA"' \

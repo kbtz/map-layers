@@ -1,10 +1,12 @@
-import { selection, select, AnySelection, } from 'd3-selection'
+import { selection, select, create, AnySelection, } from 'd3-selection'
 import { geoPatterson } from 'd3-geo-projection'
 import { geoPath } from 'd3-geo'
-import { zoom } from 'd3-zoom'
+import { zoom, zoomIdentity } from 'd3-zoom'
 
 import { feature } from 'topojson-client'
 import { TopoGeometries, Features } from 'topojson-specification'
+
+import 'd3-transition'
 
 const append = selection.prototype.append
 selection.prototype.append = function (type: string) {
@@ -21,8 +23,9 @@ selection.prototype.append = function (type: string) {
 }
 
 export default {
-	select, geoPath, geoPatterson,
-	zoom: () => zoom<SVGSVGElement, unknown>(),
+	select, create,
+	geoPath, geoPatterson,
+	zoom: () => zoom<SVGSVGElement, undefined>(), zoomIdentity,
 	features: <T extends TopoGeometries, P extends object = Record<keyof T['objects'], Features>>
 		(data: T) => new Proxy({}, { get: (_, k: string) => feature(data, data.objects[k]).features }) as P
 }
