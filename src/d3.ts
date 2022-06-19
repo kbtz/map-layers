@@ -4,7 +4,7 @@ import { geoPath } from 'd3-geo'
 import { zoom, zoomIdentity } from 'd3-zoom'
 
 import { feature } from 'topojson-client'
-import { TopoGeometries, Features } from 'topojson-specification'
+import { TopoGeometries } from 'topojson-specification'
 
 import 'd3-transition'
 
@@ -26,6 +26,6 @@ export default {
 	select, create,
 	geoPath, geoPatterson,
 	zoom: () => zoom<SVGSVGElement, undefined>(), zoomIdentity,
-	features: <T extends TopoGeometries, P extends object = Record<keyof T['objects'], Features>>
+	features: <T extends TopoGeometries, P extends object = Record<keyof T['objects'], Datum[]>>
 		(data: T) => new Proxy({}, { get: (_, k: string) => feature(data, data.objects[k]).features }) as P
 }

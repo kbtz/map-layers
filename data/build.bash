@@ -4,7 +4,7 @@ COUNTRIES=ne_${RES}_admin_0_countries
 STATES=ne_${RES}_admin_1_states_provinces
 
 cd $(dirname ${BASH_SOURCE}); mkdir -p build; cd build
-rm countries.json states.json ../map-data.json 2> /dev/null
+rm country.json state.json ../map-data.json 2> /dev/null
 set -e
 
 [ -d ${COUNTRIES} ] || {
@@ -18,7 +18,7 @@ npx mapshaper -i ${COUNTRIES}/${COUNTRIES}.shp \
 	-each 'region="Central America"' where='SUBREGION === "Caribbean" || SUBREGION === "Central America"' \
 	-each 'region="South America"' where='SUBREGION === "South America"' \
 	-filter-fields code,country,wiki,region \
-	-o countries.json format=topojson force
+	-o country.json format=topojson force
 
 [ -d ${STATES} ] || {
 	[ -f ${STATES}.zip ] || curl -O ${CDN}/${STATES}.zip
@@ -29,30 +29,39 @@ npx mapshaper -i ${STATES}/${STATES}.shp snap \
 	-simplify weighted 5% \
 	-filter-islands min-area="500000000" remove-empty \
 	-rename-fields code=adm0_a3 \
+	`#remove sparse region areas` \
+	-erase bbox=-149.7,-17.8,-149.1,-17.4 \
+	-erase bbox=172.6,52.7,173.5,53.1 \
 	`# remove overlapping area between alaska and russia` \
 	-erase bbox=-179.2,51.1,-167.7,63.9 \
-	-erase bbox=172.6,52.7,173.5,53.1 \
 	`# remove north and south poles` \
 	-clip bbox=-181,-57,181,87 \
 	-filter 'code !== "ATA"' \
-	`# normalize some odd territories` \
+	`# normalize some odd territory data` \
 	-each 'code="KAZ"' where='code === "KAB"' \
 	-each 'code="FRG";' where='code === "FRA" && iso_3166_2 === "FR-GF"' \
 	-filter 'code !== "FRA" || type_en !== "Overseas department"' \
+	-filter 'code !== "SGS"' \
 	-filter 'code !== null' \
 	-filter-fields code,name \
-	-o states.json format=topojson bbox force
+	-o state.json format=topojson bbox force
 
-npx mapshaper -i countries.json states.json combine-files \
-	-rename-layers countries-raw,states \
-	-join countries-raw target=states keys=code,code fields=country,wiki,region \
-	-dissolve code target=states copy-fields=code,country,wiki,region + name=countries \
-	-each 'country="French Guiana"; wiki="Q3769"; region="South America"' where='code === "FRG"' \
-	-dissolve region target=countries copy-fields=region + name=regions \
-	-dissolve target=regions + name=world \
-	-rename-fields target=states state=name \
-	-filter-fields target=states code,state \
-	-o ../map-data.json format=topojson bbox force target=world,regions,countries,states
+npx mapshaper -i country.json state.json combine-files \
+	-rename-layers country-raw,state \
+	-join country-raw target=state keys=code,code fields=country,wiki,region \
+	-dissolve code target=state copy-fields=code,country,wiki,region + name=country \
+	-each target=country 'country="Eswatini";' where='code === "SWZ"' \
+	-each target=country 'country="French Guiana"; wiki="Q3769"; region="South America"' where='code === "FRG"' \
+	-each target=country 'type="country"' \
+	-rename-fields target=country name=country \
+	-dissolve region target=country copy-fields=region + name=region \
+	-rename-fields target=region name=region \
+	-each target=region 'type="region"' \
+	-dissolve target=region + name=world \
+	-each target=world 'type="world"' \
+	-each target=state 'type="state"' \
+	-filter-fields target=state code,name,type \
+	-o ../map-data.json format=topojson bbox force target=world,region,country,state
 
 # TODO split country states
 #[ -d states ] || {

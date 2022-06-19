@@ -1,7 +1,6 @@
-import { Geometry, Feature } from 'geojson'
+import 'topojson-client'
 declare module 'topojson-specification' {
 	export type TopoGeometries<K extends string = string> = Topology<{ [P in K]: GeometryCollection }>
-	export type Features = Array<Feature<Geometry>>
 }
 
 declare module 'd3-selection' {

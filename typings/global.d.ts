@@ -3,6 +3,12 @@ declare module 'd3-geo-projection' {
 	export function geoPatterson(): GeoProjection
 }
 
-type MapLayers = 'countries' | 'regions' | 'states' | 'world'
-type MapData = import('topojson-specification').TopoGeometries<MapLayers>
-type Datum = GeoPermissibleObjects
+type LayerType = 'country' | 'region' | 'state' | 'world'
+type MapData = import('topojson-specification').TopoGeometries<LayerType>
+
+type BaseType = import('d3-selection').BaseType
+type Datum = import('d3-geo').ExtendedFeature<any, {
+	type: LayerType
+	name: string
+	[k: string]: string
+}>

@@ -1,20 +1,29 @@
-import './style.css'
+import './style.scss'
 import d3 from './d3'
+
+let
+	host: HTMLElement,
+	features: Record<LayerType, Datum[]>, selection: Datum[] = [],
+	country: Datum[], state: Datum[]
 
 const
 	zoom = d3.zoom().filter(() => false),
 	projection = d3.geoPatterson().rotate([-11, 0]),
 	path = d3.geoPath(projection),
 	svg = d3.create('svg'),
-	root = svg.append('g.root')
+	root = svg.append('g.root'),
+	viewbox = () => {
+		const { width, height } = host.getBoundingClientRect()
+		svg.attr('viewbox', `0 0 ${width} ${height}`)
+	}
 
-let host: HTMLElement
 
 export default (hostEl: HTMLElement, data: MapData) => {
-	const features = d3.features(data)
+	features = d3.features(data)
 
 	host = hostEl
 	host.appendChild(svg.node()!)
+	host.onclick = deselect
 
 	root.append('g.world')
 		.selectAll('path')
@@ -22,37 +31,95 @@ export default (hostEl: HTMLElement, data: MapData) => {
 		.join('path')
 		.attr('d', path)
 
-	root.append('g.regions')
+	root.append('g.region')
 		.selectAll('path')
-		.data(features.regions)
+		.data(features.region)
 		.join('path')
-		.classed('region', true)
-		.attr('data-label', d => d.properties!.region)
 		.attr('d', path)
 		.on('click', onClick)
 
-	window.onresize = onResize
+	country = features.country
+	state = features.state
+
+	window.onresize = () => {
+		viewbox()
+		focus(selection[0])
+	}
+
+	viewbox()
+
 	zoom.on('zoom', onZoom)
-
-	onResize()
 	svg.call(zoom)
-	setTimeout(() => {
-		focus(features.world[0])
-	}, 2000)
-}
 
-function onResize() {
-	const { width, height } = host.getBoundingClientRect()
-	svg.attr('viewbox', `0 0 ${width} ${height}`)
+	select(features.world[0])
 }
 
 function onZoom({ transform }: any) {
 	root.attr('transform', transform)
-	//root.attr('stroke-width', 1.5 / transform.k)
+	root.attr('stroke-width', 2 / transform.k)
 }
 
-function onClick(_: PointerEvent, datum: Datum) {
+function onClick(event: PointerEvent, datum: Datum) {
+	event.stopPropagation()
+	select(datum)
+}
+
+function select(datum: Datum) {
+	const { type, name } = datum.properties
+	if (type == 'state') return
+
+	children(type, datum)
+	selection.unshift(datum)
+
+	root.attr('class', 'root ' + type)
+	document.title = name
 	focus(datum)
+
+	root.selectAll('g.' + type + ' path')
+		.filter(d => d == datum)
+		.classed('selected', true)
+}
+
+function deselect() {
+	const { type } = selection[0].properties
+	if (type == 'world') return
+
+	unchildren(type)
+
+	const previous = selection[1]
+	selection = selection.slice(2)
+
+	select(previous)
+
+	root.select('path.selected')
+		.classed('selected', false)
+}
+
+function children(type: LayerType, datum: Datum) {
+	if (type == 'world' || type == 'state') return
+
+	const data = type == 'region'
+		? country.filter(c => c.properties['region'] == datum.properties['name'])
+		: state.filter(s => s.properties['code'] == datum.properties['code'])
+
+	// TODO 1 "state" countries
+
+	root.append('g')
+		.classed(type == 'region' ? 'country' : 'state', true)
+		.selectAll('path')
+		.data(data)
+		.join('path')
+		.attr('d', path)
+		.on('click', onClick)
+}
+
+
+function unchildren(type: LayerType) {
+	if (type == 'region') root.select('g.country').remove()
+	if (type == 'country') {
+		root.select('g.country').remove()
+		root.select('g.state').remove()
+	}
 }
 
 function focus(datum: Datum) {
@@ -61,13 +128,13 @@ function focus(datum: Datum) {
 		[[x0, y0], [x1, y1]] = path.bounds(datum)
 
 	svg
-		.transition().duration(600)
+		.transition()
+		.duration(600)
 		.call(
 			zoom.transform,
 			d3.zoomIdentity
 				.translate(width / 2, height / 2)
-				//.scale(Math.max((x1 - x0) / W, (y1 - y0) / H))
-				.scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
+				.scale(0.95 / Math.max((x1 - x0) / width, (y1 - y0) / height))
 				.translate(-(x0 + x1) / 2, -(y0 + y1) / 2)
 		)
 }

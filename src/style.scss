@@ -1,0 +1,50 @@
+html,
+body {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #000;
+	margin: 0;
+	padding: 8px;
+}
+
+#map-layers {
+	outline: 1px purple solid;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+
+	svg {
+		width: 100%;
+		height: 100%;
+	}
+
+	g.root.world g:not(.region),
+	g.root.region g:not(.country),
+	g.root.country g:not(.state) {
+		path {
+			pointer-events: none;
+		}
+	}
+
+	g.world path {
+		fill: #FFF;
+	}
+
+	path {
+		fill: transparent;
+		paint-order: stroke;
+		transition: fill 300ms ease-out;
+
+		&.selected {
+			stroke: #888;
+		}
+
+		&:hover {
+			fill: #CCC;
+		}
+	}
+}
