@@ -24,6 +24,6 @@
 	},
 	"include": [
 		"src/*.ts",
-		"typings/*.d.ts"
+		"def/*.d.ts"
 	]
 }

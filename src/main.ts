@@ -7,7 +7,7 @@ let
 	country: Datum[], state: Datum[]
 
 const
-	zoom = d3.zoom().filter(() => false),
+	zoom = d3.zoom(),
 	projection = d3.geoPatterson().rotate([-11, 0]),
 	path = d3.geoPath(projection),
 	svg = d3.create('svg'),
@@ -52,6 +52,9 @@ export default (hostEl: HTMLElement, data: MapData) => {
 	svg.call(zoom)
 
 	select(features.world[0])
+	setTimeout(() => {
+		projection.rotate([-30, 0])
+	}, 2000)
 }
 
 function onZoom({ transform }: any) {
@@ -89,10 +92,10 @@ function deselect() {
 	const previous = selection[1]
 	selection = selection.slice(2)
 
-	select(previous)
-
 	root.select('path.selected')
 		.classed('selected', false)
+
+	select(previous)
 }
 
 function children(type: LayerType, datum: Datum) {

@@ -1,3 +1,5 @@
 node_modules
-data/*
-!data/build.bash
+lib/*
+dat/*
+!dat/build.bash
+README.md

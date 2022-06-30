@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
-		"build-data": "./data/build.bash"
+		"build-data": "./dat/build.bash"
 	},
 	"dependencies": {
 		"d3-geo": "^3.0.1",

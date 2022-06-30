@@ -1,19 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<!DOCTYPE html>
+	<html lang="en">
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="shortcut icon" href="favicon.png" type="image/png">
-    <title>Map Layers</title>
-  </head>
-  <body>
-    <div id="map-layers"></div>
-    <script type="module">
+		<title>Map Layers</title>
+		<style>
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				box-sizing: border-box;
+			}
+
+			body {
+				background-color: #000;
+				margin: 0;
+				padding: 8px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="map-layers"></div>
+		<script type="module">
 			import init from './src/main.ts'
-			import data from './data/map-data.json'
-			
+			import data from './dat/map-data.json'
+		
 			const hostEl = document.getElementById('map-layers')
 			init(hostEl, data)
 		</script>
-  </body>
-</html>
+	</body>
+
+	</html>
